@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <title>CineSage</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Poppins, sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        background: linear-gradient(135deg, #0f172a, #312e81);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 25px;
+        overflow: hidden;
+      }
+
+      .container {
+        width: 100%;
+        height: 95vh;
+
+        background: rgba(255, 255, 255, 0.08);
+
+        backdrop-filter: blur(15px);
+
+        border-radius: 30px;
+
+        padding: 30px;
+
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 55px;
+      }
+
+      .header p {
+        color: #d1d5db;
+        margin-top: 10px;
+      }
+
+      .content {
+        display: flex;
+        gap: 25px;
+
+        flex: 1;
+
+        overflow: hidden;
+      }
+
+      .box {
+        flex: 1;
+
+        background: #0b1225;
+
+        border-radius: 25px;
+
+        padding: 25px;
+
+        display: flex;
+
+        flex-direction: column;
+      }
+
+      .box h2 {
+        color: white;
+        margin-bottom: 15px;
+      }
+
+      textarea {
+        width: 100%;
+        height: 100%;
+
+        border: none;
+        outline: none;
+
+        resize: none;
+
+        background: transparent;
+
+        color: white;
+
+        font-size: 16px;
+
+        line-height: 1.8;
+      }
+
+      textarea::placeholder {
+        color: #9ca3af;
+      }
+
+      .output {
+        flex: 1;
+
+        overflow-y: auto;
+
+        color: #e5e7eb;
+
+        line-height: 1.8;
+
+        white-space: pre-wrap;
+
+        padding-right: 10px;
+      }
+
+      .output::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .output::-webkit-scrollbar-thumb {
+        background: #6366f1;
+        border-radius: 10px;
+      }
+
+      .button {
+        margin-top: 20px;
+      }
+
+      button {
+        width: 100%;
+        padding: 15px;
+
+        border: none;
+
+        border-radius: 15px;
+
+        font-size: 18px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+        color: white;
+
+        background: linear-gradient(to right, #7c3aed, #2563eb);
+      }
+
+      button:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎬 CineSage</h1>
+
+        <p>AI Powered Movie Information Extractor</p>
+      </div>
+
+      <div class="content">
+        <div class="box">
+          <h2>Movie Input</h2>
+
+          <textarea
+            id="movieText"
+            placeholder="Paste movie description..."
+          ></textarea>
+
+          <div class="button">
+            <button onclick="analyzeMovie()">✨ Analyze Movie</button>
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>Extracted Information</h2>
+
+          <div class="output" id="output">Results appear here...</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function analyzeMovie() {
+        let text = document.getElementById("movieText").value;
+        let output = document.getElementById("output");
+
+        if (text.trim() == "") {
+          output.innerText = "Please enter movie text";
+          return;
+        }
+
+        output.innerText = "Analyzing...";
+
+        try {
+          const response = await fetch("/analyze", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              text: text,
+            }),
+          });
+
+          const data = await response.json();
+
+          output.innerText = data.result;
+        } catch {
+          output.innerText = "Error connecting to backend";
+        }
+      }
+    </script>
+  </body>
+</html>
